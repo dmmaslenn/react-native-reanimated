@@ -26,10 +26,15 @@ import ScrollToExample from './ScrollToExample';
 import AnimatedTabBarExample from './AnimatedTabBarExample';
 import LightboxExample from './LightboxExample';
 import LiquidSwipe from './LiquidSwipe';
+import SearchBarExample from './SearchBarExample';
 
 YellowBox.ignoreWarnings(['Calling `getNode()`']);
 
 const SCREENS = {
+  SearchBarExample: {
+    screen: SearchBarExample,
+    title: '🆕 IOS like Search Bar',
+  },
   AnimatedStyleUpdate: {
     screen: AnimatedStyleUpdateExample,
     title: '🆕 Animated Style Update',
