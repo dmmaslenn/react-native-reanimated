@@ -1,9 +1,10 @@
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
+  withTiming,
+  Easing,
 } from 'react-native-reanimated';
 import {
-  View,
   Button,
   Text,
   StyleSheet,
@@ -16,13 +17,24 @@ import React, { useState } from 'react';
 const SEARCH_BAR_WIDTH = Dimensions.get('screen').width - 60;
 
 export default function SearchBarExample(props) {
-  const [isActive, setActive] = useState(false);
   const [value, setValue] = useState('');
   const width = useSharedValue(SEARCH_BAR_WIDTH);
+  const translateY = useSharedValue(0);
+
+  const config = {
+    duration: 500,
+    easing: Easing.bezier(0.5, 0.01, 0, 1),
+  };
 
   const style = useAnimatedStyle(() => {
     return {
-      width: width.value,
+      width: withTiming(width.value, config),
+    };
+  });
+
+  const containerStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: withTiming(translateY.value, config) }],
     };
   });
 
@@ -31,7 +43,7 @@ export default function SearchBarExample(props) {
       width.value === SEARCH_BAR_WIDTH
         ? SEARCH_BAR_WIDTH - 80
         : SEARCH_BAR_WIDTH;
-    setActive(!isActive);
+    translateY.value = translateY.value === 0 ? -100 : 0;
   };
 
   const onChangeText = (text) => setValue(text);
@@ -44,7 +56,7 @@ export default function SearchBarExample(props) {
         backgroundColor: 'white',
       }}>
       <Text style={styles.header}>Header</Text>
-      <View style={[styles.container, isActive && styles.active]}>
+      <Animated.View style={[styles.container, containerStyle]}>
         <Animated.View style={[{ marginRight: 30 }, style]}>
           <TextInput
             style={styles.textInput}
@@ -56,7 +68,7 @@ export default function SearchBarExample(props) {
           />
         </Animated.View>
         <Button style={{ position: 'relative' }} title="cancel" />
-      </View>
+      </Animated.View>
     </ScrollView>
   );
 }
@@ -66,9 +78,6 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     margin: 30,
-  },
-  active: {
-    transform: [{ translateY: -100 }],
   },
   container: {
     backgroundColor: 'white',
